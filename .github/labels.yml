@@ -1,0 +1,19 @@
+- name: "🚀 Feature"
+  color: "1abc9c"
+  description: "새로운 기능 추가"
+
+- name: "🐞 Bug"
+  color: "e74c3c"
+  description: "버그 수정 필요"
+
+- name: "🛠️ Refactor"
+  color: "9b59b6"
+  description: "코드 구조 개선, 리팩토링"
+
+- name: "📦 Chore"
+  color: "f39c12"
+  description: "빌드/환경 설정, 잡무"
+
+- name: "📝 Documentation"
+  color: "0075ca"
+  description: "문서, README, 가이드 관련 작업"
