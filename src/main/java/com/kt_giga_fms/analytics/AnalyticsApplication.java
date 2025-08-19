@@ -1,4 +1,4 @@
-package com.kt_giga_fms.move_log;
+package com.kt_giga_fms.analytics;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
