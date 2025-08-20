@@ -39,7 +39,7 @@ spring:
     validate-on-migrate: true
 
 server:
-  port: 8083
+  port: 8080
 
 # Swagger Configuration
 springdoc:
