@@ -7,7 +7,7 @@ on:
       - "src/**"
       - "build.gradle"
       - "Dockerfile"
-      - ".github/workflows/deploy-car-service.yml"
+      - ".github/workflows/deploy-analystics-service.yml"
   workflow_dispatch:
 
 env:
