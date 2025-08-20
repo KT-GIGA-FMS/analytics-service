@@ -3,11 +3,11 @@ name: Deploy analytics-service (Docker Hub + App Service)
 on:
   push:
     branches: "deploy"
-    paths:
-      - "src/**"
-      - "build.gradle"
-      - "Dockerfile"
-      - ".github/workflows/deploy-analystics-service.yml"
+    # paths:
+    #   - "src/**"
+    #   - "build.gradle"
+    #   - "Dockerfile"
+    #   - ".github/workflows/deploy-analystics-service.yml"
   workflow_dispatch:
 
 env:
