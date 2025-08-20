@@ -1,0 +1,126 @@
+name: Deploy analytics-service (Docker Hub + App Service)
+
+on:
+  push:
+    branches: "deploy"
+    paths:
+      - "src/**"
+      - "build.gradle"
+      - "Dockerfile"
+      - ".github/workflows/deploy-car-service.yml"
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: rlfrkdms1/car-service   # <-- Docker Hub 리포지토리
+  RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
+
+jobs:
+  build-push-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set tag
+        id: vars
+        run: echo "TAG=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+
+      - name: Docker Hub login
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build & Push (Docker Hub)
+        run: |
+          docker build -t $IMAGE_NAME:${{ steps.vars.outputs.TAG }} .
+          docker tag  $IMAGE_NAME:${{ steps.vars.outputs.TAG }} $IMAGE_NAME:latest
+          docker push $IMAGE_NAME:${{ steps.vars.outputs.TAG }}
+          docker push $IMAGE_NAME:latest
+
+      # Azure Web App에 Docker 이미지 배포
+      - name: Deploy to Azure Web App (container)
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+          images: index.docker.io/${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.TAG }}
+
+      # 환경변수 설정 (데이터베이스 연결 정보)
+      - name: Set environment variables
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+          app-settings: |
+            SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }}
+            SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}
+            SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}
+
+      # 배포 완료 후 대기
+      - name: Wait for deployment
+        run: |
+          echo "배포 완료 후 헬스체크 대기 중..."
+          sleep 60
+
+      # 헬스체크 수행
+      - name: Health check
+        run: |
+          # App Service URL 가져오기
+          APP_URL=$(az webapp show \
+            -g "$RESOURCE_GROUP" -n "${{ secrets.AZURE_WEBAPP_NAME }}" \
+            --query "defaultHostName" -o tsv)
+          
+          echo "App Service URL: https://$APP_URL"
+          
+          # 헬스체크 수행
+          for i in {1..10}; do
+            if curl -f "https://$APP_URL/actuator/health" > /dev/null 2>&1; then
+              echo "✅ 헬스체크 성공!"
+              break
+            else
+              echo "⏳ 헬스체크 대기 중... ($i/10)"
+              sleep 15
+            fi
+          done
+          
+          # 최종 헬스체크
+          if ! curl -f "https://$APP_URL/actuator/health" > /dev/null 2>&1; then
+            echo "❌ 헬스체크 실패!"
+            exit 1
+          fi
+
+      # API 테스트
+      - name: Test API endpoint
+        run: |
+          APP_URL=$(az webapp show \
+            -g "$RESOURCE_GROUP" -n "${{ secrets.AZURE_WEBAPP_NAME }}" \
+            --query "defaultHostName" -o tsv)
+          
+          echo "🚗 차량 등록 API 테스트 중..."
+          
+          # 간단한 API 테스트
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X POST "https://$APP_URL/api/v1/cars" \
+            -H "Content-Type: application/json" \
+            -d '{"carModelId": 1, "plateNo": "TEST123", "status": "테스트"}')
+          
+          if [ "$RESPONSE" = "201" ] || [ "$RESPONSE" = "400" ]; then
+            echo "✅ API 테스트 성공! (응답 코드: $RESPONSE)"
+          else
+            echo "❌ API 테스트 실패! (응답 코드: $RESPONSE)"
+            exit 1
+          fi
+
+      # 배포 성공 알림
+      - name: Deployment success notification
+        if: success()
+        run: |
+          echo "🎉 배포 성공!"
+          echo "App Service: ${{ secrets.AZURE_WEBAPP_NAME }}"
+          echo "Image: $IMAGE_NAME:${{ steps.vars.outputs.TAG }}"
+          echo "배포 시간: $(date)"
