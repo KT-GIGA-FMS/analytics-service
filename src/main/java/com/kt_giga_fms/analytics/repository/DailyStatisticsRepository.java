@@ -21,3 +21,5 @@ public interface DailyStatisticsRepository extends JpaRepository<DailyStatistics
     @Query("SELECT d FROM DailyStatistics d WHERE d.statDate >= :startDate ORDER BY d.statDate DESC")
     List<DailyStatistics> findRecentStatistics(@Param("startDate") LocalDate startDate);
 }
+
+

@@ -1,18 +1,40 @@
 package com.kt_giga_fms.analytics.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.math.BigDecimal;
 
+@Schema(description = "운행 기록 DTO")
 public class TripRecordDto {
+    
+    @Schema(description = "차량 ID", example = "CAR001", required = true)
     private String vehicleId;
+    
+    @Schema(description = "차량명", example = "현대 아반떼")
     private String vehicleName;
+    
+    @Schema(description = "운행 시작 시간", example = "2024-01-15T09:00:00")
     private LocalDateTime startTime;
+    
+    @Schema(description = "운행 종료 시간", example = "2024-01-15T17:00:00")
     private LocalDateTime endTime;
+    
+    @Schema(description = "총 운행 거리 (km)", example = "150.5")
     private BigDecimal totalDistance;
+    
+    @Schema(description = "시작 위도", example = "37.5665")
     private Double startLatitude;
+    
+    @Schema(description = "시작 경도", example = "126.9780")
     private Double startLongitude;
+    
+    @Schema(description = "종료 위도", example = "37.5665")
     private Double endLatitude;
+    
+    @Schema(description = "종료 경도", example = "126.9780")
     private Double endLongitude;
+    
+    @Schema(description = "연료 소비량 (L)", example = "12.5")
     private BigDecimal fuelConsumed;
     
     // Constructor

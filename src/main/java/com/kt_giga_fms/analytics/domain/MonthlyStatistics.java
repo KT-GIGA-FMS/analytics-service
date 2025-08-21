@@ -55,3 +55,5 @@ public class MonthlyStatistics {
         return year + "-" + String.format("%02d", month);
     }
 }
+
+

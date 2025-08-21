@@ -1,14 +1,30 @@
 package com.kt_giga_fms.analytics.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 
+@Schema(description = "차량 통계 응답 DTO")
 public class VehicleStatisticsResponse {
+    
+    @Schema(description = "차량 ID", example = "CAR001")
     private String vehicleId;
+    
+    @Schema(description = "차량명", example = "현대 아반떼")
     private String vehicleName;
+    
+    @Schema(description = "총 운행 거리 (km)", example = "1500.5")
     private BigDecimal totalDistance;
+    
+    @Schema(description = "월간 운행 거리 (km)", example = "150.5")
     private BigDecimal monthlyDistance;
+    
+    @Schema(description = "년월", example = "2024-01")
     private String yearMonth;
+    
+    @Schema(description = "총 운행 횟수", example = "25")
     private Integer totalTrips;
+    
+    @Schema(description = "월간 운행 횟수", example = "3")
     private Integer monthlyTrips;
     
     // Constructor

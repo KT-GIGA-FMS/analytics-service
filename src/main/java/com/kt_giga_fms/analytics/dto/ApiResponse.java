@@ -1,11 +1,21 @@
 package com.kt_giga_fms.analytics.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 
+@Schema(description = "API 응답 공통 DTO")
 public class ApiResponse<T> {
+    
+    @Schema(description = "요청 성공 여부", example = "true")
     private boolean success;
+    
+    @Schema(description = "응답 메시지", example = "Success")
     private String message;
+    
+    @Schema(description = "응답 데이터")
     private T data;
+    
+    @Schema(description = "에러 메시지 목록")
     private List<String> errors;
     
     // Constructor

@@ -20,3 +20,5 @@ public interface MonthlyStatisticsRepository extends JpaRepository<MonthlyStatis
     @Query("SELECT m FROM MonthlyStatistics m WHERE m.year >= :startYear ORDER BY m.year DESC, m.month DESC")
     List<MonthlyStatistics> findRecentStatistics(@Param("startYear") Integer startYear);
 }
+
+

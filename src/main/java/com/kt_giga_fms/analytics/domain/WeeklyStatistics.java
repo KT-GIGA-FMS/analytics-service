@@ -56,3 +56,5 @@ public class WeeklyStatistics {
         createdAt = LocalDate.now();
     }
 }
+
+
