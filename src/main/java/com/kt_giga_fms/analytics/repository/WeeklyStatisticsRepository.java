@@ -21,3 +21,5 @@ public interface WeeklyStatisticsRepository extends JpaRepository<WeeklyStatisti
     @Query("SELECT w FROM WeeklyStatistics w WHERE w.weekStartDate >= :startDate ORDER BY w.weekStartDate DESC")
     List<WeeklyStatistics> findRecentStatistics(@Param("startDate") LocalDate startDate);
 }
+
+
