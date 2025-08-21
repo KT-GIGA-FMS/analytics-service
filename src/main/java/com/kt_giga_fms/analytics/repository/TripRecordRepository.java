@@ -35,4 +35,8 @@ public interface TripRecordRepository extends JpaRepository<TripRecord, Long> {
     Long getMonthlyTripsByVehicleId(@Param("vehicleId") String vehicleId, 
                                    @Param("startDate") LocalDateTime startDate, 
                                    @Param("endDate") LocalDateTime endDate);
+    
+    // 날짜 범위로 운행 기록 조회
+    @Query("SELECT t FROM TripRecord t WHERE t.startTime BETWEEN :startTime AND :endTime ORDER BY t.startTime")
+    List<TripRecord> findByStartTimeBetween(@Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime);
 }
