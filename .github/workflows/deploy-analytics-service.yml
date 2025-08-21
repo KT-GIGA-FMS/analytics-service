@@ -3,15 +3,15 @@ name: Deploy analytics-service (Docker Hub + App Service)
 on:
   push:
     branches: "deploy"
-    paths:
-      - "src/**"
-      - "build.gradle"
-      - "Dockerfile"
-      - ".github/workflows/deploy-car-service.yml"
+    # paths:
+    #   - "src/**"
+    #   - "build.gradle"
+    #   - "Dockerfile"
+    #   - ".github/workflows/deploy-analystics-service.yml"
   workflow_dispatch:
 
 env:
-  IMAGE_NAME: rlfrkdms1/car-service   # <-- Docker Hub 리포지토리
+  IMAGE_NAME: rlfrkdms1/analytics-service   # <-- Docker Hub 리포지토리
   RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
 
 jobs:
